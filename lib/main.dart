@@ -40,7 +40,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B5E4B)),
         useMaterial3: true,
       ),
-      home: CourtBookingForm(users: users, initialValues: initialBookingValues),
+      home: CourtBookingForm(
+        users: users,
+        initialValues: initialBookingValues,
+      ),
     );
   }
 }
