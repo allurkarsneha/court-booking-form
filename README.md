@@ -27,6 +27,7 @@ lib/
 ## How to Run
 
 flutter pub get
+
 flutter run
 
 ## Example Console Output
