@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   ];
 
   static final Map<String, dynamic> initialBookingValues = {
-    'playerName': 'Allurkar Sneha',
+    'playerName': 'John Smith',
     'courtRating': 8.5,
     'courtType': CourtType.tennis,
     'needsEquipment': true,
@@ -37,15 +37,10 @@ class MyApp extends StatelessWidget {
       title: 'Court Booking Form',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1B5E4B),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B5E4B)),
         useMaterial3: true,
       ),
-      home: CourtBookingForm(
-        users: users,
-        initialValues: initialBookingValues,
-      ),
+      home: CourtBookingForm(users: users, initialValues: initialBookingValues),
     );
   }
 }

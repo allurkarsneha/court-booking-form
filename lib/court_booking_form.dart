@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 
-enum CourtType {
-  tennis,
-  badminton,
-  pickleball,
-}
+enum CourtType { tennis, badminton, pickleball }
 
 class AppUser {
   final int id;
   final String firstName;
   final String lastName;
 
-  AppUser({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-  });
+  AppUser({required this.id, required this.firstName, required this.lastName});
 
   String get fullName => '$firstName $lastName';
 
@@ -40,6 +32,9 @@ class CourtBookingForm extends StatefulWidget {
 class _CourtBookingFormState extends State<CourtBookingForm> {
   final _formKey = GlobalKey<FormState>();
 
+  late TextEditingController _playerNameController;
+  late TextEditingController _courtRatingController;
+  late CourtType _selectedCourtType;
   late bool _needsEquipment;
   late bool _needsCoach;
   late bool _makePublic;
@@ -49,10 +44,41 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
   void initState() {
     super.initState();
 
+    _playerNameController = TextEditingController(
+      text: widget.initialValues['playerName']?.toString() ?? '',
+    );
+
+    _courtRatingController = TextEditingController(
+      text: widget.initialValues['courtRating']?.toString() ?? '',
+    );
+
     _needsEquipment = widget.initialValues['needsEquipment'] as bool;
     _needsCoach = widget.initialValues['needsCoach'] as bool;
     _makePublic = widget.initialValues['makePublic'] as bool;
     _selectedPartner = widget.initialValues['partner'] as AppUser;
+  }
+
+  @override
+  void dispose() {
+    _playerNameController.dispose();
+    _courtRatingController.dispose();
+    super.dispose();
+  }
+
+  String? _validatePlayerName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter a player name';
+    }
+
+    if (value.trim().length < 5) {
+      return 'Minimum 5 characters required';
+    }
+
+    if (value.trim().length > 20) {
+      return 'Maximum 20 characters allowed';
+    }
+
+    return null;
   }
 
   String? _validatePartner(AppUser? value) {
@@ -78,7 +104,7 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     }
 
     final Map<String, dynamic> bookingValues = {
-      'playerName': widget.initialValues['playerName'],
+      'playerName': _playerNameController.text.trim(),
       'courtRating': widget.initialValues['courtRating'],
       'courtType': widget.initialValues['courtType'],
       ...getBookingOptionsData(),
@@ -87,10 +113,21 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     debugPrint('Saved Court Booking:');
     debugPrint(bookingValues.toString());
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Booking saved successfully'),
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Booking saved successfully')));
+  }
+
+  Widget _buildPlayerNameField() {
+    return TextFormField(
+      controller: _playerNameController,
+      decoration: const InputDecoration(
+        labelText: 'Player Name',
+        hintText: 'Enter 5 to 20 characters',
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.person),
       ),
+      validator: _validatePlayerName,
     );
   }
 
@@ -100,10 +137,7 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
       children: [
         const Text(
           'Booking Options',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
 
         CheckboxListTile(
@@ -170,15 +204,10 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 14),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 14)),
     );
   }
 
@@ -219,8 +248,12 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
                     const SizedBox(height: 24),
 
                     _buildPlaceholder(
-                      'Player Name, Court Rating, and Sport Type fields will be added here.',
+                      'Court Rating, and Sport Type fields will be added here.',
                     ),
+
+                    const SizedBox(height: 24),
+
+                    _buildPlayerNameField(),
 
                     const SizedBox(height: 24),
 
