@@ -1,17 +1,37 @@
 import 'package:flutter/material.dart';
 
+/*
+  ENUM SECTION
+
+  CourtType: defines possible sport/court choices for the booking form.
+  Enums limit the possible values to a fixed list, which is safer than using
+  plain strings since strings can be misspelled.
+
+  In this form, the user can choose from:
+  - tennis
+  - badminton
+  - pickleball 
+*/
 enum CourtType { tennis, badminton, pickleball }
 
+/*
+  USER MODEL SECTION
+
+  AppUser represents a single user/player object. The dropdown uses a list of 
+  AppUser objects, and displays the user's first and last name using the fullName
+  getter. 
+
+  Each user has an:
+  - id: a unique identfier for the user
+  - firstName: the user's first name
+  - lastName: the user's last name
+*/
 class AppUser {
   final int id;
   final String firstName;
   final String lastName;
 
-  AppUser({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-  });
+  AppUser({required this.id, required this.firstName, required this.lastName});
 
   String get fullName => '$firstName $lastName';
 
@@ -19,6 +39,19 @@ class AppUser {
   String toString() => fullName;
 }
 
+/*
+  STATEFUL WIDGET SECTION 
+
+  CourtBookingForm is a StatefulWidget because the form values can change while 
+  the app is running. 
+
+  This widget receives:
+  - users: a list of AppUser objects for the dropdown
+  - initialValues: a Map<String, dynamic> containing the initial form values
+
+  The initialValues map allows the form to start with existing data, which is 
+  helpful for editing existing court bookings.
+*/
 class CourtBookingForm extends StatefulWidget {
   final List<AppUser> users;
   final Map<String, dynamic> initialValues;
@@ -34,8 +67,32 @@ class CourtBookingForm extends StatefulWidget {
 }
 
 class _CourtBookingFormState extends State<CourtBookingForm> {
+  /*
+    FORM KEY SECTION 
+
+    _formKey is used to control and validate the whole form. When the Save 
+    Booking button is pressed, this key lets us call:
+
+    _formKey.currentState!.validate()
+
+    which checks every field in the form that has a validator.
+  */
   final _formKey = GlobalKey<FormState>();
 
+  /*
+    STATE VARIABLES SECTION 
+
+    These variables store the current values of the form. 
+
+    TextEditingController is used for text fields so we can:
+    - set initial text values
+    - read the user's typed input
+    - clear or modify text if needed
+
+    The checkbox values are booleans, each checkbox is either selected or not selected.
+
+    _selectedParter stores the selected AppUser object from the dropdown.
+  */
   late TextEditingController _playerNameController;
   late TextEditingController _courtRatingController;
 
@@ -45,6 +102,17 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
   late bool _makePublic;
   late AppUser? _selectedPartner;
 
+  /*
+    INITSTATE SECTION 
+
+    initState() runs one time when the widget is first created.
+
+    This is where the form loads its initial values from the Map<String, dynamic>
+    passed into the widget.
+
+    The player name and court rating are placed into TextEditingControllers.
+    The checkbox values and dropdown value are copied into state variables.
+  */
   @override
   void initState() {
     super.initState();
@@ -64,6 +132,14 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     _selectedPartner = widget.initialValues['partner'] as AppUser;
   }
 
+  /*
+    DISPOSE SECTION
+
+    dispose() runs when this widget is removed from the screen.
+
+    TextEditingControllers use system resources, so they should be disposed of 
+    when the form closes to prevent memory leaks.
+  */
   @override
   void dispose() {
     _playerNameController.dispose();
@@ -71,6 +147,18 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     super.dispose();
   }
 
+  /*
+    PLAYER NAME VALIDATION SECTION 
+
+    This method validates the Player Name text field.
+
+    Text field requirements:
+    - the field cannot be empty
+    - the name must be at least 5 characters and no more than 20 characters
+
+    Returning a string shows an error message.
+    Returning null means the input is valid.
+  */
   String? _validatePlayerName(String? value) {
     final playerName = value?.trim() ?? '';
 
@@ -141,6 +229,23 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     };
   }
 
+  /*
+    SAVE BOOKING SECTION - update
+
+    This method runs when the Save Booking button is pressed.
+
+    It first validates the form - if any field is invalid, the method stops.
+    
+    If the form is valid, it creates a Map<String, dynamic> called bookingValues.
+    The map stores:
+    - playerName from the TextEditingController
+    - courtRating from the initial values
+    - courtType from the initial values
+    - checkbox values
+    - selected partner object
+
+    It then prints the map to the console and shows a Snackbar.
+  */
   void _saveBooking() {
     FocusScope.of(context).unfocus();
 
@@ -159,13 +264,22 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     debugPrint('Saved Court Booking:');
     debugPrint(bookingValues.toString());
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Booking saved successfully'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Booking saved successfully')));
   }
 
+  /*
+    PLAYER NAME FIELD UI SECTION 
+
+    This method builds the Player Name TextFormField.
+
+    TextFormField is used because it works with Flutter's Form widget and 
+    supports validation. 
+
+    The controller connects this text field to _playerNameController.
+    The validator connects it to _validatePlayerName().
+  */
   Widget _buildPlayerNameField() {
     return TextFormField(
       controller: _playerNameController,
@@ -276,6 +390,17 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     );
   }
 
+  /*
+    DROPDOWN SECTION 
+
+    This method builds the partner dropdown. 
+
+    The dropdown uses AppUser as its type: DropdownButtonFormField<AppUser>
+
+    This means the selected value is the full AppUser object, not just the user's 
+    name as a string. The dropdown displays user.fullName, but stores the actual
+    AppUser.
+  */
   Widget _buildPartnerDropdown() {
     return DropdownButtonFormField<AppUser>(
       initialValue: _selectedPartner,
