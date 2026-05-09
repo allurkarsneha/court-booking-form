@@ -177,6 +177,22 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     return null;
   }
 
+  /*
+    COURT RATING VALIDATION SECTION
+
+    This method validates the Court Rating text field.
+
+    Validation requirements:
+    - the field cannot be empty
+    - the value must be numeric
+    - the value must be above 3.00 and below 10.00
+
+    double.tryParse() safely converts the text into a double.
+    If the conversion fails, it returns null instead of crashing the app.
+
+    Returning a string displays an error message.
+    Returning null means the input is valid.
+  */
   String? _validateCourtRating(String? value) {
     final ratingText = value?.trim() ?? '';
 
@@ -209,6 +225,20 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     return null;
   }
 
+  /*
+    COURT TYPE TEXT CONVERSION SECTION
+
+    This helper method converts a CourtType enum value into a readable string.
+
+    Example:
+    - CourtType.tennis -> "Tennis"
+    - CourtType.badminton -> "Badminton"
+
+    This is helpful for:
+    - displaying enum values in the UI
+    - printing readable values to the console
+    - storing cleaner text values in the booking map
+  */
   String _courtTypeText(CourtType courtType) {
     switch (courtType) {
       case CourtType.tennis:
@@ -294,6 +324,19 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     );
   }
 
+  /*
+    COURT RATING FIELD UI SECTION
+
+    This method builds the Court Rating TextFormField.
+
+    Features:
+    - uses TextEditingController to manage the field value
+    - uses a numeric keyboard with decimal support
+    - validates numeric input using _validateCourtRating()
+
+    The keyboardType helps mobile devices show a number keypad, improving the 
+    user experience for numeric input.
+  */
   Widget _buildCourtRatingField() {
     return TextFormField(
       controller: _courtRatingController,
@@ -309,6 +352,23 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     );
   }
 
+  /*
+    SPORT TYPE RADIO BUTTON SECTION
+
+    This method builds the Sport Type selection area using radio buttons.
+
+    The radio buttons use the CourtType enum as their value type.
+
+    Only one radio button can be selected at a time because they share:
+    - the same groupValue
+    - the same RadioGroup
+
+    When the user selects a different sport type:
+    - setState() updates _selectedCourtType
+    - the UI rebuilds automatically
+
+    This section demonstrates enum-based radio button input.
+  */
   Widget _buildSportTypeSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,6 +484,30 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     );
   }
 
+  /*
+    BUILD METHOD SECTION
+
+    build() creates the visible UI for the entire screen.
+
+    Main layout structure:
+    - Scaffold provides the page structure
+    - AppBar displays the screen title
+    - GestureDetector dismisses the keyboard when tapping outside fields
+    - SafeArea prevents overlap with system UI
+    - SingleChildScrollView enables scrolling on smaller screens
+    - Card visually groups the form content
+    - Form enables validation for all input fields
+    - Column arranges widgets vertically
+
+    The form contains:
+    - text fields
+    - radio buttons
+    - checkboxes
+    - dropdown menu
+    - save button
+
+    Pressing the Save Booking button calls _saveBooking().
+  */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
