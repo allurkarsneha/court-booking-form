@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     AppUser(id: 8, firstName: 'Janice', lastName: 'Litman-Goralnik'),
     AppUser(id: 9, firstName: 'Regina', lastName: 'Phalange'),
     AppUser(id: 10, firstName: 'Gunther', lastName: 'Central Perk'),
-  ];
+  ];  //This creates 10 AppUser objects. These users are used in the Select Partner dropdown.
 
   static final Map<String, dynamic> initialBookingValues = {
     'playerName': 'John Smith',
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     'needsCoach': false,
     'makePublic': true,
     'partner': users[0],
-  };
+  };  //This map provides the default values when the form first opens.
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
       home: CourtBookingForm(
         users: users,
-        initialValues: initialBookingValues,
+        initialValues: initialBookingValues,   //main.dart sends the user list and initial values map to the form screen.
       ),
     );
   }

@@ -91,7 +91,7 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
 
     The checkbox values are booleans, each checkbox is either selected or not selected.
 
-    _selectedParter stores the selected AppUser object from the dropdown.
+    _selectedPartner stores the selected AppUser object from the dropdown.
   */
   late TextEditingController _playerNameController;
   late TextEditingController _courtRatingController;
@@ -269,8 +269,8 @@ class _CourtBookingFormState extends State<CourtBookingForm> {
     If the form is valid, it creates a Map<String, dynamic> called bookingValues.
     The map stores:
     - playerName from the TextEditingController
-    - courtRating from the initial values
-    - courtType from the initial values
+    - courtRating from the TextEditingController
+    - courtType from the selected radio button
     - checkbox values
     - selected partner object
 
